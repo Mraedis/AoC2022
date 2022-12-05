@@ -1,14 +1,21 @@
-moves = File.join(File.dirname(__FILE__),  "../Inputs/Input05.txt")
-#moves = "move 1 from 2 to 1
-#move 3 from 1 to 3
-#move 2 from 2 to 1
-#move 1 from 1 to 2"
-#crates = ["ZN", "MCD", "P"]
-crates1 = ["WBDNCFJ", "PZVQLST", "PZBGJT", "DTLJZBHC", "GVBJS", "PSQ", "BVDFLMPN", "PSMFBDLR", "VDTR"]
-crates2 = ["WBDNCFJ", "PZVQLST", "PZBGJT", "DTLJZBHC", "GVBJS", "PSQ", "BVDFLMPN", "PSMFBDLR", "VDTR"]
+cratestack, moves = File.read(File.join(File.dirname(__FILE__),  "../Inputs/Input05.txt")).split(/\n\n/)
 
-for move in File.read(moves).split(/\n/)
-#for move in moves.split(/\n/)
+crates = []
+for i in (0..((cratestack.split(/\n/).reverse[0].length+1)/4))
+    crates.append("")
+end
+for line in cratestack.split(/\n/).reverse[1..]
+    for i in (0..((line.length+1)/4))
+        if line[i*4+1] =~ /\A\p{Alnum}+\z/ then
+            crates[i] += line[i*4+1]
+        end
+    end
+end
+
+crates1 = crates.dup
+crates2 = crates.dup
+
+for move in moves.split(/\n/)
     amnt, frm, dest = move.scan(/\d+/)
     amnt, frm, dest = amnt.to_i, frm.to_i - 1, dest.to_i - 1
     ld1 = (crates1[frm][-amnt..-1]).reverse
