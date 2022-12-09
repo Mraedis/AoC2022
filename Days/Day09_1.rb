@@ -2,12 +2,9 @@ require 'set'
 
 moves = File.read(File.join(File.dirname(__FILE__),  "../Inputs/Input09.txt")).split("\n")
 
-snake1 = Array.new(2) {[0, 0]}
-snake2 = Array.new(10) {[0, 0]}
-
+snakes = [Array.new(2) {[0, 0]}, Array.new(10) {[0, 0]}]
 visited = [Set.new([0, 0]), Set.new([0, 0])]
 
-snakes = [snake1, snake2]
 for m in moves
     dir, a = m.split(' ')
     amount = a.to_i
