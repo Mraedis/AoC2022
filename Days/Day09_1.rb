@@ -3,7 +3,7 @@ require 'set'
 moves = File.read(File.join(File.dirname(__FILE__),  "../Inputs/Input09.txt")).split("\n")
 
 snakes = [Array.new(2) {[0, 0]}, Array.new(10) {[0, 0]}]
-visited = [Set.new([0, 0]), Set.new([0, 0])]
+visited = Array.new(2) {Set.new([0, 0])}
 
 for m in moves
     dir, a = m.split(' ')
@@ -19,7 +19,7 @@ for m in moves
                 ady = dy.abs()
                 if adx > 1 || ady > 1
                     snake[i][0] += adx > 0 ? dx / adx : 0
-                    snake[i][1] += ady > 0 ? dy / ady  : 0
+                    snake[i][1] += ady > 0 ? dy / ady : 0
                 end
             end
             visited[index] << snake[-1].dup()
