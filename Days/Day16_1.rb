@@ -1,7 +1,7 @@
 valvelist = File.read(File.join(File.dirname(__FILE__),  "../Inputs/Input16.txt"))
-@valves = []
-@flows = {}
+@flows = Hash.new { |flow, key| flow[key] = 0 }
 @distance = Hash.new { |distance, key| distance[key] = 10000 }
+@valves = []
 
 for valve in valvelist.split(/\n/)
     valve = valve.match /Valve (\w+) .*=(\d*); .* valves? (.*)/
@@ -10,31 +10,30 @@ for valve in valvelist.split(/\n/)
     if flo > 0
         @flows.store(valve[1], flo)
     end
-    for v in valve[3].split(', ')
-        @distance.store(valve[1]+v, 1)
+    for v2 in valve[3].split(', ')
+        @distance.store(valve[1]+v2, 1)
     end
 end
 
 # Floyd-Warshall
 for v1,v2,v3 in @valves.product(@valves, @valves)
-    @distance.store(v1+v3, [@distance[v1+v3], @distance[v1+v2] + @distance[v2+v3]].min)
+    @distance.store(v2+v3, [@distance[v2+v3], @distance[v2+v1] + @distance[v1+v3]].min)
 end
 
 @cache = {}
-def findmax(time, v1='AA', vlvs)
-    params = v1+time.to_s+vlvs.join
+def findmax(time, v1, vlvs, elephant)
+    params = v1+time.to_s+vlvs.join+elephant.to_s
     unless @cache[params]
-        result = []
+        result = [0]
         for v2 in vlvs
-            if @distance.has_key? v1+v2
-                if @distance[v1+v2] < time
-                    part1 = @flows[v2].nil? ? 0 : @flows[v2]
-                    part2 = findmax((time-@distance[v1+v2]-1), v2, vlvs - [v2])
-                    result.append(part1 * (time-@distance[v1+v2]-1) + part2)
-                end
+            edge = v1+v2
+            if @distance[edge] < time
+                result.append(@flows[v2] * (time-@distance[edge]-1) + findmax((time-@distance[edge]-1), v2, vlvs - [v2], elephant))
+            end
+            if elephant
+                result.append(findmax(26, 'AA', vlvs, false))
             end
         end
-        result << 0
         findmax = result.max
         @cache.store(params, findmax)
         return findmax
@@ -42,4 +41,5 @@ def findmax(time, v1='AA', vlvs)
     return @cache[params]
 end
 
-p findmax(30, 'AA', @valves)
+p findmax(30, 'AA', @flows.keys, false)
+p findmax(26, 'AA', @flows.keys, true)
