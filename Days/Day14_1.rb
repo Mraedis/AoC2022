@@ -22,11 +22,11 @@ grid = Array.new(ymax - ymin + 1) { Array.new(xmax - xmin + 1) {'.'}}
 for dline in drawlines
   xstart, ystart, xstop, ystop = dline.flatten()
   if xstart == xstop
-    for y in [ystart, ystop].sort()[0]..[ystart, ystop].sort()[1]
+    for y in Range.new(*[ystart, ystop].minmax)
       grid[y-ymin][xstart-xmin] = '#'
     end
   else
-    for x in [xstart, xstop].sort()[0]..[xstart, xstop].sort()[1] 
+    for x in Range.new(*[xstart, xstop].minmax)
       grid[ystart-ymin][x-xmin] = '#'
     end
   end
@@ -67,7 +67,7 @@ until oob do
 end
 
 #for g in grid
-# p g
+# p g.join()
 #end
 
 puts "Answer to part 1:\n"

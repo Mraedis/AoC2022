@@ -25,11 +25,11 @@ drawlines.append([[xmin-wide, ymax+2], [xmax+wide, ymax+2]])
 for dline in drawlines
   xstart, ystart, xstop, ystop = dline.flatten()
   if xstart == xstop
-    for y in [ystart, ystop].sort()[0]..[ystart, ystop].sort()[1]
+    for y in Range.new(*[ystart, ystop].minmax)
       grid[y-ymin][xstart+wide-xmin] = '#'
     end
   else
-    for x in [xstart, xstop].sort()[0]..[xstart, xstop].sort()[1] 
+    for x in Range.new(*[xstart, xstop].minmax)
       grid[ystart-ymin][x+wide-xmin] = '#'
     end
   end
